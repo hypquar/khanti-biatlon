@@ -1,10 +1,13 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Sleds
 {
     public class SuspensionVehicle : MonoBehaviour
     {
         [SerializeField] private SledInputController _controller;
+        [SerializeField] private VehicleEntrySystem _entrySystem;
 
         [SerializeField] private float _acceleration = 20f;
         [SerializeField] private float _decelleration = 5f;
@@ -23,10 +26,48 @@ namespace Sleds
         [SerializeField] private Transform[] _suspensionPoints;
         [SerializeField] private Transform _velocitiesDebugPoint;
 
+        [SerializeField] private InputActionProperty _movementAction;
+
         private Vector3 _currentLocalSpeed;
         private float _currentSpeedRatio = 0f;
 
         private Rigidbody _rb;
+
+        private void OnEnable()
+        {
+            if (_movementAction.action != null)
+            {
+                _movementAction.action.Enable();
+                _movementAction.action.performed += OnMovementPressed;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_movementAction.action != null)
+            {
+                _movementAction.action.performed -= OnMovementPressed;
+                _movementAction.action.Disable();
+            }
+        }
+
+        private void OnMovementPressed(InputAction.CallbackContext context)
+        {
+            if (_entrySystem.IsInVehicle)
+            {
+                if (_controller.Status == SledStatus.Halt)
+                {
+                    _controller.Status = SledStatus.Moving;
+                    return;
+                }
+
+                if (_controller.Status == SledStatus.Moving)
+                {
+                    _controller.Status = SledStatus.Halt;
+                    return;
+                }
+            }
+        }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()

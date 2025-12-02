@@ -25,7 +25,31 @@ namespace Sleds
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out InputHandle handle) && handle.Status != Sleds.HandleStatus.DeadZone)
+            Debug.Log($"=== OnTriggerEnter ===");
+            Debug.Log($"Collider object: {other.gameObject.name}");
+            Debug.Log($"Active: {other.gameObject.activeInHierarchy}");
+
+            // Все компоненты на объекте
+            var allComponents = other.GetComponents<Component>();
+            Debug.Log($"Components on {other.name}:");
+            foreach (var comp in allComponents)
+            {
+                Debug.Log($"  - {comp.GetType().Name}");
+            }
+
+            // Проверка InputHandle
+            var handler = other.GetComponent<InputHandle>();
+            Debug.Log($"GetComponent<InputHandle>: {handler}");
+
+            // Проверка по типу
+            var handleByType = other.GetComponent(typeof(InputHandle));
+            Debug.Log($"GetComponent(typeof): {handleByType}");
+
+            // Проверка через имя типа (если namespace проблема)
+            var handleByString = other.GetComponent("InputHandle");
+            Debug.Log($"GetComponent(string): {handleByString}");
+
+            if (other.TryGetComponent(out InputHandle handle) && handle.Status == HandleStatus.BeyondActiveZone)
             {
                 handle.ChangeStatus(HandleStatus.ActiveZone);
 
@@ -36,7 +60,7 @@ namespace Sleds
         {
             if (other.TryGetComponent(out InputHandle handle))
             {
-                handle.ChangeStatus(Sleds.HandleStatus.BeyondActiveZone);
+                handle.ChangeStatus(HandleStatus.BeyondActiveZone);
 
                 Debug.Log($"Handle {other.name} exited active zone");
             }

@@ -1,8 +1,5 @@
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows;
 
 namespace Sleds
 {
@@ -18,7 +15,7 @@ namespace Sleds
 
         public float SteeringInput => _steeringInput;
         public float BrakingInput => _brakingInput;
-        public SledStatus Status => _status;
+        public SledStatus Status { get { return _status; } set { _status = value; } }
 
         private void FixedUpdate()
         {
