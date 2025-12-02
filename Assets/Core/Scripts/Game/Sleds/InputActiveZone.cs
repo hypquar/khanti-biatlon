@@ -27,7 +27,7 @@ namespace Sleds
         {
             if (other.TryGetComponent(out InputHandle handle) && handle.Status != Sleds.HandleStatus.DeadZone)
             {
-                handle.ChangeStatus(Sleds.HandleStatus.ActiveZone);
+                handle.ChangeStatus(HandleStatus.ActiveZone);
 
                 Debug.Log($"Handle {other.name} entered active zone");
             }

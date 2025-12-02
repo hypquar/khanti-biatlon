@@ -11,18 +11,24 @@ namespace Sleds
         [SerializeField] private InputActiveZone _activeZone;
         [SerializeField] private InputDeadZone _deadZone;
         [SerializeField] private List<InputHandle> _handles;
-        [SerializeField] private Rigidbody _sled;
 
         [SerializeField] private float _steeringInput;
         [SerializeField] private float _brakingInput;
+        [SerializeField] private SledStatus _status;
+
+        public float SteeringInput => _steeringInput;
+        public float BrakingInput => _brakingInput;
+        public SledStatus Status => _status;
 
         private void FixedUpdate()
         {
             ManageHandleInput();
-            //ManageMovement();
         }
 
-        
+        public void ChangeMovementStatus(SledStatus status)
+        {
+            _status = status;
+        }
 
         private void ManageHandleInput()
         {

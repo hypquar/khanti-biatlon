@@ -4,11 +4,14 @@ namespace Sleds
 {
     public class SuspensionVehicle : MonoBehaviour
     {
+        [SerializeField] private SledInputController _controller;
+
         [SerializeField] private float _acceleration = 20f;
         [SerializeField] private float _decelleration = 5f;
         [SerializeField] private float _maxSpeed = 100f;
         [SerializeField] private float _linearDrag = 2f;
-        [SerializeField] private float _steeringSensitivity = 2f;
+        [SerializeField] private float _steeringSencitivity = 2f;
+        [SerializeField] private float _brakingSencitivity = 20f;
         [SerializeField] private AnimationCurve _steeringCurve;
 
         [SerializeField] private float _suspensionRestDistance;
@@ -24,6 +27,7 @@ namespace Sleds
         private float _currentSpeedRatio = 0f;
 
         private Rigidbody _rb;
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
@@ -37,7 +41,10 @@ namespace Sleds
 
             _currentSpeedRatio = _currentLocalSpeed.z / _maxSpeed;
 
-            Acceleration();
+            if (_controller.Status == SledStatus.Moving)
+            {
+                Acceleration();
+            }
             Decceleration();
             Steering();
             Suspension();
@@ -92,7 +99,7 @@ namespace Sleds
 
         private void Steering() //TODO: add steering based on recieving axis info from SledController
         {
-            
+            _rb.AddTorque(_controller.SteeringInput * _steeringCurve.Evaluate(Mathf.Abs(_currentSpeedRatio)) * _steeringSencitivity * Time.fixedDeltaTime * transform.up, ForceMode.VelocityChange);
         }
 
         private void Decceleration()
@@ -102,7 +109,10 @@ namespace Sleds
 
         private void Acceleration() //TODO: add acceleration based on input from SledController
         {
-
+            if (_currentLocalSpeed.z < _maxSpeed)
+            {
+                _rb.AddForce(transform.forward * (_acceleration - (_controller.BrakingInput * _brakingSencitivity)), ForceMode.Acceleration);
+            }
         }
     }
 }
