@@ -28,6 +28,8 @@ namespace Sleds
 
         [SerializeField] private InputActionProperty _movementAction;
 
+        [SerializeField] private float _speed;
+
         private Vector3 _currentLocalSpeed;
         private float _currentSpeedRatio = 0f;
 
@@ -138,7 +140,7 @@ namespace Sleds
             }
         }
 
-        private void Steering() //TODO: add steering based on recieving axis info from SledController
+        private void Steering() 
         {
             _rb.AddTorque(_controller.SteeringInput * _steeringCurve.Evaluate(Mathf.Abs(_currentSpeedRatio)) * _steeringSencitivity * Time.fixedDeltaTime * transform.up, ForceMode.VelocityChange);
         }
@@ -148,7 +150,7 @@ namespace Sleds
             _rb.AddForce(_currentSpeedRatio * _decelleration * -_rb.transform.forward, ForceMode.Acceleration);
         }
 
-        private void Acceleration() //TODO: add acceleration based on input from SledController
+        private void Acceleration() 
         {
             if (_currentLocalSpeed.z < _maxSpeed)
             {

@@ -31,7 +31,9 @@ public class VehicleEntrySystem : MonoBehaviour
     [SerializeField] private InputActionProperty enterExitAction;
 
     [Header("Settings")]
-    [SerializeField] private float interactionDistance = 2f;
+    [SerializeField] private float interactionDistance = 8f;
+
+    [SerializeField] private LoopinVaryingSound _walkingLoopSound;
 
     private bool isInVehicle = false;
     private bool isPlayerNearVehicle = false;
@@ -72,7 +74,7 @@ public class VehicleEntrySystem : MonoBehaviour
             isPlayerNearVehicle = distance <= interactionDistance;
         }
 
-        Debug.Log($"XR Origin pos: {xrOrigin.position}, Vehicle pos: {vehicleTransform.position}, Distance: {distance}, Threshold: {interactionDistance}");
+        //Debug.Log($"XR Origin pos: {xrOrigin.position}, Vehicle pos: {vehicleTransform.position}, Distance: {distance}, Threshold: {interactionDistance}");
     }
 
     private void OnEnterExitPressed(InputAction.CallbackContext context)
@@ -87,6 +89,7 @@ public class VehicleEntrySystem : MonoBehaviour
 
     private void EnterVehicle()
     {
+        _walkingLoopSound.enabled = false;
         originalParent = xrOrigin.parent;
         DisableLocomotion();
 
@@ -110,6 +113,7 @@ public class VehicleEntrySystem : MonoBehaviour
 
     private void ExitVehicle()
     {
+        _walkingLoopSound.enabled = true;
         Vector3 cameraLocalOffset = xrOrigin.InverseTransformPoint(playerCamera.transform.position);
         cameraLocalOffset.y = 0;
 
