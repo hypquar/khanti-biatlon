@@ -5,7 +5,6 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Climbing;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Turning;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class VehicleEntrySystem : MonoBehaviour
 {
