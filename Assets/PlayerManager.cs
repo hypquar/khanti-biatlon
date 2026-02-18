@@ -8,6 +8,6 @@ public class PlayerManager : MonoBehaviour
     
     private void Start()
     {
-        
+        Debug.Log("zzzzzzzzzz");
     }
 }

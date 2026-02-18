@@ -5,9 +5,11 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Climbing;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Turning;
-
+using Sleds;
 public class VehicleEntrySystem : MonoBehaviour
 {
+    [Header("Sled")]
+    [SerializeField] private SledInputController _sledController;
     [Header("References")]
     [SerializeField] private Transform vehicleTransform;
     [SerializeField] private Transform xrOrigin;
@@ -20,9 +22,9 @@ public class VehicleEntrySystem : MonoBehaviour
     [SerializeField] private ContinuousMoveProvider continuousMoveProvider;
     [SerializeField] private ContinuousTurnProvider continuousTurnProvider;
     [SerializeField] private TeleportationProvider teleportationProvider;
-    [SerializeField] private ClimbProvider climbProvider;                       // Добавлено
-    [SerializeField] private GrabMoveProvider grabMoveProvider;                 // Добавлено
-    [SerializeField] private TwoHandedGrabMoveProvider twoHandedGrabMoveProvider; // Добавлено
+    [SerializeField] private ClimbProvider climbProvider;                       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private GrabMoveProvider grabMoveProvider;                 // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private TwoHandedGrabMoveProvider twoHandedGrabMoveProvider; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     [SerializeField] private CharacterController characterController;
     [SerializeField] private GameObject _locomotionObject;
 
@@ -92,18 +94,18 @@ public class VehicleEntrySystem : MonoBehaviour
         originalParent = xrOrigin.parent;
         DisableLocomotion();
 
-        // Сохраняем смещение камеры ДО любых изменений (в локальных координатах XR Origin)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ XR Origin)
         Vector3 cameraLocalOffset = xrOrigin.InverseTransformPoint(playerCamera.transform.position);
-        cameraLocalOffset.y = 0; // Игнорируем высоту
+        cameraLocalOffset.y = 0; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
-        // Привязываем к транспорту
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         xrOrigin.SetParent(vehicleTransform);
 
-        // Ставим XR Origin на позицию сиденья
+        // пїЅпїЅпїЅпїЅпїЅпїЅ XR Origin пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         xrOrigin.rotation = seatPosition.rotation;
         xrOrigin.position = seatPosition.position;
 
-        // Сдвигаем назад на величину смещения камеры (в мировых координатах)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Vector3 worldOffset = xrOrigin.TransformVector(cameraLocalOffset);
         xrOrigin.position -= worldOffset;
 
@@ -112,6 +114,7 @@ public class VehicleEntrySystem : MonoBehaviour
 
     private void ExitVehicle()
     {
+        _sledController.DropHandles();
         _walkingLoopSound.enabled = true;
         Vector3 cameraLocalOffset = xrOrigin.InverseTransformPoint(playerCamera.transform.position);
         cameraLocalOffset.y = 0;

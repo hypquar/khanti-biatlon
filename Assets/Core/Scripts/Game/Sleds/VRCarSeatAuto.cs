@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-// В XRI 3.x пространства имен могут отличаться, проверьте using
+// пїЅ XRI 3.x пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ using
 using UnityEngine.InputSystem;
 
 public class VehicleSeat : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform seatPoint;
-    [SerializeField] private GameObject playerXROrigin; // Ссылка на XR Origin
-    [SerializeField] private GameObject locomotionSystem; // Объект "Locomotion" с провайдерами
+    [SerializeField] private GameObject playerXROrigin; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ XR Origin
+    [SerializeField] private GameObject locomotionSystem; // пїЅпїЅпїЅпїЅпїЅпїЅ "Locomotion" пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions;
@@ -20,34 +20,34 @@ public class VehicleSeat : MonoBehaviour
     {
         if (!playerXROrigin.TryGetComponent(out _controller))
         {
-            Debug.Log("Контроллер на ориджин не найден");
+            Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ");
         }
     }
 
     public void EnterVehicle()
     {
-        // 1. Сохраняем исходного родителя (если нужно вернуться в мир)
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅС‹пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ)
         originalParent = playerXROrigin.transform.parent;
 
-        // 2. Сажаем игрока
+        // 2. пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         playerXROrigin.transform.SetParent(seatPoint);
         playerXROrigin.transform.localPosition = Vector3.zero;
         playerXROrigin.transform.localRotation = Quaternion.identity;
 
-        // 3. Отключаем систему локомоции XRI
+        // 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ XRI
         if (locomotionSystem != null)
             locomotionSystem.SetActive(false);
 
         _controller.enabled = false;
 
-        // 4. Переключаем Action Map (псевдокод)
+        // 4. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Action Map (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         // inputActions.FindActionMap("XRI RightHand Locomotion").Disable();
         // inputActions.FindActionMap("VehicleControls").Enable();
     }
 
     public void ExitVehicle()
     {
-        // Возвращаем все как было
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         playerXROrigin.transform.SetParent(originalParent);
 
         _controller.enabled = true;
