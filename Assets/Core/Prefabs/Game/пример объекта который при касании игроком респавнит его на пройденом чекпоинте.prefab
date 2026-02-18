@@ -129,6 +129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7344b4af44602947977518d58089353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrackBoundary
-  TagName: Player
+  TagName: Sled
   autoRespawn: 1
   respawnDelay: 0.5

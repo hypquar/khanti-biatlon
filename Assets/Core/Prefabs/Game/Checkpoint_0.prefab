@@ -43,16 +43,16 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 7, y: 7, z: 7}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1097787293407944415
 MonoBehaviour:
@@ -66,6 +66,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37739e8f4d5f6254d8dd0bb1c51b02c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Checkpoint
-  PlayerTag: Player
+  PlayerTag: Sled
   checkpointIndex: 0
   gizmoColor: {r: 0, g: 1, b: 0, a: 1}
