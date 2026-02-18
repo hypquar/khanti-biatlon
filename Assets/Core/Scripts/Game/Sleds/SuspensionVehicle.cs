@@ -140,6 +140,10 @@ namespace Sleds
             }
         }
 
+        public void StopSpeed()
+        {
+            _speed = 0;
+        }
         private void Steering() 
         {
             _rb.AddTorque(_controller.SteeringInput * _steeringCurve.Evaluate(Mathf.Abs(_currentSpeedRatio)) * _steeringSencitivity * Time.fixedDeltaTime * transform.up, ForceMode.VelocityChange);
