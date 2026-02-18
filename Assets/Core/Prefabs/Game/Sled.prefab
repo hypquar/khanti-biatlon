@@ -588,6 +588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c0cdd26d277ad24fbce58d383285b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sledController: {fileID: 6003456981277744731}
   vehicleTransform: {fileID: 4210625634744890438}
   xrOrigin: {fileID: 0}
   playerCamera: {fileID: 0}

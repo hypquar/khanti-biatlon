@@ -17,6 +17,13 @@ namespace Sleds
         public float BrakingInput => _brakingInput;
         public SledStatus Status { get { return _status; } set { _status = value; } }
 
+        public void DropHandles()
+        {
+            foreach (var handle in _handles)
+            {
+                handle.ChangeStatus(HandleStatus.BeyondActiveZone);
+            }
+        }
         private void FixedUpdate()
         {
             ManageHandleInput();
