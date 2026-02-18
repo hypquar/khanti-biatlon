@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Anchor
   - Sled
+  - Bullet
   layers:
   - Default
   - TransparentFX
