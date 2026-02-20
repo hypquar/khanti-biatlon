@@ -1,103 +1,106 @@
 using UnityEngine;
 using System.Collections;
 
-public class ArrowImpactHandler : MonoBehaviour
+namespace Arrow
 {
-    [Header("Impact Settings")]
-    [SerializeField] private bool _explodeOnImpact = false;
-    [SerializeField] private float _stickDuration = 3f;
-    [SerializeField] private float _minEmbedDepth = 0.05f;
-    [SerializeField] private float _maxEmbedDepth = 0.15f;
-    [SerializeField] private LayerMask _ignoreLayers;
-    [SerializeField] private Transform _tip;
-
-    [Header("Visual Effects")]
-    [SerializeField] private GameObject _impactGameObject;
-    [SerializeField] private MeshRenderer _arrowMeshRenderer;
-
-    private ArrowLauncher _arrowLauncher;
-    private Rigidbody _rigidBody;
-    private bool _hasHit = false;
-
-    private void Awake()
+    public class ArrowImpactHandler : MonoBehaviour
     {
-        _arrowLauncher = GetComponent<ArrowLauncher>();
-        _rigidBody = GetComponent<Rigidbody>();
-    }
+        [Header("Impact Settings")]
+        [SerializeField] private bool _explodeOnImpact = false;
+        [SerializeField] private float _stickDuration = 3f;
+        [SerializeField] private float _minEmbedDepth = 0.05f;
+        [SerializeField] private float _maxEmbedDepth = 0.15f;
+        [SerializeField] private LayerMask _ignoreLayers;
+        [SerializeField] private Transform _tip;
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (_hasHit || ((1 << collision.gameObject.layer) & _ignoreLayers) != 0)
+        [Header("Visual Effects")]
+        [SerializeField] private GameObject _impactGameObject;
+        [SerializeField] private MeshRenderer _arrowMeshRenderer;
+
+        private Arrow.ArrowLauncher _arrowLauncher;
+        private Rigidbody _rigidBody;
+        private bool _hasHit = false;
+
+        private void Awake()
         {
-            return;
+            _arrowLauncher = GetComponent<Arrow.ArrowLauncher>();
+            _rigidBody = GetComponent<Rigidbody>();
         }
 
-        _hasHit = true;
-        _arrowLauncher.StopFlight();
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (_hasHit || ((1 << collision.gameObject.layer) & _ignoreLayers) != 0)
+            {
+                return;
+            }
 
-        if (_explodeOnImpact)
-        {
-            HandleExplosion();
-        }
-        else
-        {
-            HandleStick(collision);
-        }
-    }
+            _hasHit = true;
+            _arrowLauncher.StopFlight();
 
-    private void HandleExplosion()
-    {
-        Debug.Log("Explosion Called");
-        if (_arrowMeshRenderer != null)
-        {
-            _arrowMeshRenderer.enabled = false;
-        }
-
-        if (_impactGameObject != null)
-        {
-            Instantiate(_impactGameObject, transform.position, Quaternion.identity);
+            if (_explodeOnImpact)
+            {
+                HandleExplosion();
+            }
+            else
+            {
+                HandleStick(collision);
+            }
         }
 
-        Destroy(gameObject);
-    }
+        private void HandleExplosion()
+        {
+            Debug.Log("Explosion Called");
+            if (_arrowMeshRenderer != null)
+            {
+                _arrowMeshRenderer.enabled = false;
+            }
 
-    private void HandleStick(Collision collision)
-    {
-        Vector3 arrowDirection = transform.forward;
-        Vector3 arrowUp = transform.up;
-        ContactPoint contact = collision.GetContact(0);
+            if (_impactGameObject != null)
+            {
+                Instantiate(_impactGameObject, transform.position, Quaternion.identity);
+            }
 
-        float randomDepth = Random.Range(_minEmbedDepth, _maxEmbedDepth);
-        Quaternion finalRotation = Quaternion.LookRotation(arrowDirection, arrowUp);
-        Vector3 centerOffset = _tip.localPosition;
-        Vector3 finalPosition = contact.point - (finalRotation * centerOffset) + contact.normal * -randomDepth;
+            Destroy(gameObject);
+        }
 
-        transform.SetPositionAndRotation(finalPosition, finalRotation);
+        private void HandleStick(Collision collision)
+        {
+            Vector3 arrowDirection = transform.forward;
+            Vector3 arrowUp = transform.up;
+            ContactPoint contact = collision.GetContact(0);
 
-        CreateStabJoint(collision, randomDepth);
+            float randomDepth = Random.Range(_minEmbedDepth, _maxEmbedDepth);
+            Quaternion finalRotation = Quaternion.LookRotation(arrowDirection, arrowUp);
+            Vector3 centerOffset = _tip.localPosition;
+            Vector3 finalPosition = contact.point - (finalRotation * centerOffset) + contact.normal * -randomDepth;
 
-        transform.SetParent(collision.transform, true);
-        StartCoroutine(DespawnAfterDelay());
-    }
+            transform.SetPositionAndRotation(finalPosition, finalRotation);
 
-    public ConfigurableJoint CreateStabJoint(Collision collision, float randomDepth)
-    {
-        var joint = gameObject.AddComponent<ConfigurableJoint>();
-        joint.connectedBody = collision.rigidbody;
-        joint.xMotion = ConfigurableJointMotion.Limited;
-        joint.yMotion = ConfigurableJointMotion.Locked;
-        joint.zMotion = ConfigurableJointMotion.Locked;
+            CreateStabJoint(collision, randomDepth);
 
-        var limit = joint.linearLimit;
-        limit.limit = randomDepth;
-        joint.linearLimit = limit;
+            transform.SetParent(collision.transform, true);
+            StartCoroutine(DespawnAfterDelay());
+        }
 
-        return joint;
-    }
+        public ConfigurableJoint CreateStabJoint(Collision collision, float randomDepth)
+        {
+            var joint = gameObject.AddComponent<ConfigurableJoint>();
+            joint.connectedBody = collision.rigidbody;
+            joint.xMotion = ConfigurableJointMotion.Limited;
+            joint.yMotion = ConfigurableJointMotion.Locked;
+            joint.zMotion = ConfigurableJointMotion.Locked;
 
-    private IEnumerator DespawnAfterDelay()
-    {
-        yield return new WaitForSeconds(_stickDuration);
-        Destroy(gameObject);
+            var limit = joint.linearLimit;
+            limit.limit = randomDepth;
+            joint.linearLimit = limit;
+
+            return joint;
+        }
+
+        private IEnumerator DespawnAfterDelay()
+        {
+            yield return new WaitForSeconds(_stickDuration);
+            Destroy(gameObject);
+        }
     }
 }

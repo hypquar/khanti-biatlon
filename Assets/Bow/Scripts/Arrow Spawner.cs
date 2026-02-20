@@ -2,78 +2,75 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-public class ArrowSpawner : MonoBehaviour
+namespace Bow
 {
-    [SerializeField] private GameObject _arrowPrefab;
-    [SerializeField] private GameObject _notchPoint;
-    [SerializeField] private float _spawnDelay = 1f;
-
-    private XRGrabInteractable _bow;
-    private XRPullInteractable _pullInteractable;
-    private bool _arrowNotched = false;
-    private GameObject _currentArrow = null;
-
-    void Start()
+    public class ArrowSpawner : MonoBehaviour
     {
-        _bow = GetComponent<XRGrabInteractable>();
-        _pullInteractable = GetComponentInChildren<XRPullInteractable>();
+        [SerializeField] private GameObject _arrowPrefab;
+        [SerializeField] private GameObject _notchPoint;
+        [SerializeField] private float _spawnDelay = 1f;
 
-        if (_pullInteractable != null)
-        {
-            _pullInteractable.PullActionReleased += NotchEmpty;
-        }
-    }
+        private XRGrabInteractable _bow;
+        private XRPullInteractable _pullInteractable;
+        private bool _arrowNotched = false;
+        public bool _haveArrow = false;
+        private GameObject _currentArrow = null;
 
-    private void OnDestroy()
-    {
-        if (_pullInteractable != null)
+        void Start()
         {
-            _pullInteractable.PullActionReleased -= NotchEmpty;
-        }
-    }
+            _bow = GetComponent<XRGrabInteractable>();
+            _pullInteractable = GetComponentInChildren<XRPullInteractable>();
 
-    private void Update()
-    {
-        if (_bow.isSelected && !_arrowNotched)
-        {
-            _arrowNotched = true;
-            StartCoroutine(DelayedSpawn());
+            if (_pullInteractable != null)
+            {
+                _pullInteractable.PullActionReleased += NotchEmpty;
+            }
         }
 
-        if (!_bow.isSelected && _currentArrow != null)
+        private void OnDestroy()
         {
-            Destroy(_currentArrow);
-            NotchEmpty(1f);
+            if (_pullInteractable != null)
+            {
+                _pullInteractable.PullActionReleased -= NotchEmpty;
+            }
         }
-    }
 
-    private void NotchEmpty(float value)
-    {
-        _arrowNotched = false;
-        _currentArrow = null;
-    }
-
-    private IEnumerator DelayedSpawn()
-    {
-        yield return new WaitForSeconds(_spawnDelay);
-
-        _currentArrow = Instantiate(_arrowPrefab, _notchPoint.transform);
-        //Debug.Log(_currentArrow);
-        //Debug.Log(_currentArrow.GetComponent<ArrowLauncher>());
-        ArrowLauncher launcher = _currentArrow.GetComponent<ArrowLauncher>();
-        if (_currentArrow != null && _pullInteractable != null)
+        private void Update()
         {
-            Debug.Log("launcher INITIALIZE");
-            launcher.Initialize(_pullInteractable);
+            if (_bow.isSelected && !_arrowNotched && _haveArrow)
+            {
+                _arrowNotched = true;
+                StartCoroutine(DelayedSpawn());
+            }
+
+            if (!_bow.isSelected && _currentArrow != null)
+            {
+                Destroy(_currentArrow);
+                NotchEmpty(1f);
+            }
         }
-        //if (_currentArrow != null && _pullInteractable != null)
-        //{
-        //    Debug.Log("launcher INITIALIZE");
-        //    _currentArrow.GetComponent<ArrowLauncher>().Initialize(_pullInteractable);
-        //}
-        else
+
+        private void NotchEmpty(float value)
         {
-            Debug.Log("launcher NOT INITIALIZE");
+            _arrowNotched = false;
+            _currentArrow = null;
+        }
+
+        private IEnumerator DelayedSpawn()
+        {
+            yield return new WaitForSeconds(_spawnDelay);
+
+            _currentArrow = Instantiate(_arrowPrefab, _notchPoint.transform);
+            Arrow.ArrowLauncher launcher = _currentArrow.GetComponent<Arrow.ArrowLauncher>();
+            if (_currentArrow != null && _pullInteractable != null)
+            {
+                Debug.Log("launcher INITIALIZE");
+                launcher.Initialize(_pullInteractable);
+            }
+            else
+            {
+                Debug.Log("launcher NOT INITIALIZE");
+            }
         }
     }
 }
