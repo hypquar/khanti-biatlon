@@ -1,0 +1,4 @@
+- добавлено namespace Bow
+- обращаться к скриптам лука Arrow Spawner, Arrow Trigger, Bow Audio Handler теперь нужно через "Bow."
+- добавлен namespace Arrow
+- обращаться к скриптам стрелы Arrow Spawner, Arrow Launcher, Arrow Impact Handler теперь нужно через "Arrow." 
