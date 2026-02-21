@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Climbing;
@@ -8,69 +9,71 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Turning;
 
 public class VehicleEntrySystem : MonoBehaviour
 {
+    public UnityEvent OnExit;
+
     [Header("References")]
-    [SerializeField] private Transform vehicleTransform;
-    [SerializeField] private Transform xrOrigin;
-    [SerializeField] private Camera playerCamera;
-    [SerializeField] private Transform seatPosition;
-    [SerializeField] private Transform exitPosition;
+    [SerializeField] private Transform _vehicleTransform;
+    [SerializeField] private Transform _xrOrigin;
+    [SerializeField] private Camera _playerCamera;
+    [SerializeField] private Transform _seatPosition;
+    [SerializeField] private Transform _exitPosition;
 
     [Header("Locomotion Components")]
-    [SerializeField] private LocomotionMediator locomotionMediator;
-    [SerializeField] private ContinuousMoveProvider continuousMoveProvider;
-    [SerializeField] private ContinuousTurnProvider continuousTurnProvider;
-    [SerializeField] private TeleportationProvider teleportationProvider;
-    [SerializeField] private ClimbProvider climbProvider;                       // Добавлено
-    [SerializeField] private GrabMoveProvider grabMoveProvider;                 // Добавлено
-    [SerializeField] private TwoHandedGrabMoveProvider twoHandedGrabMoveProvider; // Добавлено
-    [SerializeField] private CharacterController characterController;
+    [SerializeField] private LocomotionMediator _locomotionMediator;
+    [SerializeField] private ContinuousMoveProvider _continuousMoveProvider;
+    [SerializeField] private ContinuousTurnProvider _continuousTurnProvider;
+    [SerializeField] private TeleportationProvider _teleportationProvider;
+    [SerializeField] private ClimbProvider _climbProvider;                       
+    [SerializeField] private GrabMoveProvider _grabMoveProvider;                 
+    [SerializeField] private TwoHandedGrabMoveProvider _twoHandedGrabMoveProvider;
+    [SerializeField] private CharacterController _characterController;
     [SerializeField] private GameObject _locomotionObject;
 
     [Header("Input Actions")]
-    [SerializeField] private InputActionProperty enterExitAction;
+    [SerializeField] private InputActionProperty _enterExitAction;
 
     [Header("Settings")]
-    [SerializeField] private float interactionDistance = 8f;
+    [SerializeField] private float _interactionDistance = 8f;
 
     [SerializeField] private LoopinVaryingSound _walkingLoopSound;
 
-    private bool isInVehicle = false;
-    private bool isPlayerNearVehicle = false;
-    private Transform originalParent;
+    private bool _isInVehicle = false;
+    private bool _isPlayerNearVehicle = false;
+    private Transform _originalParent;
 
-    public bool IsInVehicle => isInVehicle;
+    public bool IsInVehicle => _isInVehicle;
 
     private void OnEnable()
     {
-        if (enterExitAction.action != null)
+        if (_enterExitAction.action != null)
         {
-            enterExitAction.action.Enable();
-            enterExitAction.action.performed += OnEnterExitPressed;
+            _enterExitAction.action.Enable();
+            _enterExitAction.action.performed += OnEnterExitPressed;
         }
     }
 
     private void OnDisable()
     {
-        if (enterExitAction.action != null)
+        if (_enterExitAction.action != null)
         {
-            enterExitAction.action.performed -= OnEnterExitPressed;
-            enterExitAction.action.Disable();
+            _enterExitAction.action.performed -= OnEnterExitPressed;
+            _enterExitAction.action.Disable();
         }
     }
 
     private void Update()
     {
-        if (xrOrigin == null || vehicleTransform == null) return;
+        if (_xrOrigin == null || _vehicleTransform == null) return;
 
-        Vector3 playerPos = playerCamera != null
-            ? playerCamera.transform.position
-            : xrOrigin.position;
+        Vector3 playerPos = _playerCamera != null
+            ? _playerCamera.transform.position
+            : _xrOrigin.position;
 
-        float distance = Vector3.Distance(playerPos, vehicleTransform.position);
+        float distance = Vector3.Distance(playerPos, _vehicleTransform.position);
 
-        if (!isInVehicle)
+        if (!_isInVehicle)
         {
-            isPlayerNearVehicle = distance <= interactionDistance;
+            _isPlayerNearVehicle = distance <= _interactionDistance;
         }
 
         //Debug.Log($"XR Origin pos: {xrOrigin.position}, Vehicle pos: {vehicleTransform.position}, Distance: {distance}, Threshold: {interactionDistance}");
@@ -78,73 +81,76 @@ public class VehicleEntrySystem : MonoBehaviour
 
     private void OnEnterExitPressed(InputAction.CallbackContext context)
     {
-        Debug.Log($"Button Pressed! Near Vehicle: {isPlayerNearVehicle}, In Vehicle: {isInVehicle}");
+        Debug.Log($"Button Pressed! Near Vehicle: {_isPlayerNearVehicle}, In Vehicle: {_isInVehicle}");
 
-        if (isInVehicle)
+        if (_isInVehicle)
+        {
             ExitVehicle();
-        else if (isPlayerNearVehicle)
+            OnExit.Invoke();
+        }
+        else if (_isPlayerNearVehicle)
             EnterVehicle();
     }
 
     private void EnterVehicle()
     {
         _walkingLoopSound.enabled = false;
-        originalParent = xrOrigin.parent;
+        _originalParent = _xrOrigin.parent;
         DisableLocomotion();
 
         // Сохраняем смещение камеры ДО любых изменений (в локальных координатах XR Origin)
-        Vector3 cameraLocalOffset = xrOrigin.InverseTransformPoint(playerCamera.transform.position);
+        Vector3 cameraLocalOffset = _xrOrigin.InverseTransformPoint(_playerCamera.transform.position);
         cameraLocalOffset.y = 0; // Игнорируем высоту
 
         // Привязываем к транспорту
-        xrOrigin.SetParent(vehicleTransform);
+        _xrOrigin.SetParent(_vehicleTransform);
 
         // Ставим XR Origin на позицию сиденья
-        xrOrigin.rotation = seatPosition.rotation;
-        xrOrigin.position = seatPosition.position;
+        _xrOrigin.rotation = _seatPosition.rotation;
+        _xrOrigin.position = _seatPosition.position;
 
         // Сдвигаем назад на величину смещения камеры (в мировых координатах)
-        Vector3 worldOffset = xrOrigin.TransformVector(cameraLocalOffset);
-        xrOrigin.position -= worldOffset;
+        Vector3 worldOffset = _xrOrigin.TransformVector(cameraLocalOffset);
+        _xrOrigin.position -= worldOffset;
 
-        isInVehicle = true;
+        _isInVehicle = true;
     }
 
     private void ExitVehicle()
     {
         _walkingLoopSound.enabled = true;
-        Vector3 cameraLocalOffset = xrOrigin.InverseTransformPoint(playerCamera.transform.position);
+        Vector3 cameraLocalOffset = _xrOrigin.InverseTransformPoint(_playerCamera.transform.position);
         cameraLocalOffset.y = 0;
 
-        xrOrigin.SetParent(originalParent);
+        _xrOrigin.SetParent(_originalParent);
 
-        xrOrigin.rotation = exitPosition.rotation;
-        xrOrigin.position = exitPosition.position;
+        _xrOrigin.rotation = _exitPosition.rotation;
+        _xrOrigin.position = _exitPosition.position;
 
-        Vector3 worldOffset = xrOrigin.TransformVector(cameraLocalOffset);
-        xrOrigin.position -= worldOffset;
+        Vector3 worldOffset = _xrOrigin.TransformVector(cameraLocalOffset);
+        _xrOrigin.position -= worldOffset;
 
         EnableLocomotion();
-        isInVehicle = false;
+        _isInVehicle = false;
     }
 
 
     private void DisableLocomotion()
     {
-        if (locomotionMediator != null) locomotionMediator.enabled = false;
-        if (characterController != null) characterController.enabled = false;
+        if (_locomotionMediator != null) _locomotionMediator.enabled = false;
+        if (_characterController != null) _characterController.enabled = false;
 
         // Movement providers
-        if (continuousMoveProvider != null) continuousMoveProvider.enabled = false;
-        if (grabMoveProvider != null) grabMoveProvider.enabled = false;
-        if (twoHandedGrabMoveProvider != null) twoHandedGrabMoveProvider.enabled = false;
+        if (_continuousMoveProvider != null) _continuousMoveProvider.enabled = false;
+        if (_grabMoveProvider != null) _grabMoveProvider.enabled = false;
+        if (_twoHandedGrabMoveProvider != null) _twoHandedGrabMoveProvider.enabled = false;
 
         // Climbing
-        if (climbProvider != null) climbProvider.enabled = false;
+        if (_climbProvider != null) _climbProvider.enabled = false;
 
         // Turning & Teleportation
-        if (continuousTurnProvider != null) continuousTurnProvider.enabled = false;
-        if (teleportationProvider != null) teleportationProvider.enabled = false;
+        if (_continuousTurnProvider != null) _continuousTurnProvider.enabled = false;
+        if (_teleportationProvider != null) _teleportationProvider.enabled = false;
 
         if (_locomotionObject != null) _locomotionObject.SetActive(false);
     }
@@ -153,25 +159,25 @@ public class VehicleEntrySystem : MonoBehaviour
     {
         if (_locomotionObject != null) _locomotionObject.SetActive(true);
 
-        if (locomotionMediator != null) locomotionMediator.enabled = true;
-        if (characterController != null) characterController.enabled = true;
+        if (_locomotionMediator != null) _locomotionMediator.enabled = true;
+        if (_characterController != null) _characterController.enabled = true;
 
-        if (continuousMoveProvider != null) continuousMoveProvider.enabled = true;
-        if (grabMoveProvider != null) grabMoveProvider.enabled = true;
-        if (twoHandedGrabMoveProvider != null) twoHandedGrabMoveProvider.enabled = true;
+        if (_continuousMoveProvider != null) _continuousMoveProvider.enabled = true;
+        if (_grabMoveProvider != null) _grabMoveProvider.enabled = true;
+        if (_twoHandedGrabMoveProvider != null) _twoHandedGrabMoveProvider.enabled = true;
 
-        if (climbProvider != null) climbProvider.enabled = true;
+        if (_climbProvider != null) _climbProvider.enabled = true;
 
-        if (continuousTurnProvider != null) continuousTurnProvider.enabled = true;
-        if (teleportationProvider != null) teleportationProvider.enabled = true;
+        if (_continuousTurnProvider != null) _continuousTurnProvider.enabled = true;
+        if (_teleportationProvider != null) _teleportationProvider.enabled = true;
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (vehicleTransform != null)
+        if (_vehicleTransform != null)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(vehicleTransform.position, interactionDistance);
+            Gizmos.DrawWireSphere(_vehicleTransform.position, _interactionDistance);
         }
     }
 }

@@ -88,7 +88,10 @@ namespace Sleds
             {
                 Acceleration();
             }
-            Decceleration();
+            if (_controller.Status.Equals(SledStatus.Halt))
+            {
+                Decceleration();
+            }
             Steering();
             Suspension();
             SidewaysDrag();

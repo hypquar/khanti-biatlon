@@ -22,9 +22,14 @@ namespace Sleds
             ManageHandleInput();
         }
 
-        public void ChangeMovementStatus(SledStatus status)
+        public void SetMovementStatusHalt()
         {
-            _status = status;
+            _status = SledStatus.Halt;
+        }
+
+        public void SetMovementStatusMoving()
+        {
+            _status = SledStatus.Moving;
         }
 
         private void ManageHandleInput()

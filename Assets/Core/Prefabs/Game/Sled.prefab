@@ -498,7 +498,7 @@ MonoBehaviour:
   _controller: {fileID: 6003456981277744731}
   _entrySystem: {fileID: 7049220107857257866}
   _acceleration: 20
-  _decelleration: 5
+  _decelleration: 60
   _maxSpeed: 30
   _linearDrag: 2
   _steeringSencitivity: 0.2
@@ -589,32 +589,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c0cdd26d277ad24fbce58d383285b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vehicleTransform: {fileID: 4210625634744890438}
-  xrOrigin: {fileID: 0}
-  playerCamera: {fileID: 0}
-  seatPosition: {fileID: 3209785059995599676}
-  exitPosition: {fileID: 688949833937697200}
-  locomotionMediator: {fileID: 0}
-  continuousMoveProvider: {fileID: 0}
-  continuousTurnProvider: {fileID: 0}
-  teleportationProvider: {fileID: 0}
-  climbProvider: {fileID: 0}
-  grabMoveProvider: {fileID: 0}
-  twoHandedGrabMoveProvider: {fileID: 0}
-  characterController: {fileID: 0}
+  OnExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6003456981277744731}
+        m_TargetAssemblyTypeName: Sleds.SledInputController, Assembly-CSharp
+        m_MethodName: SetMovementStatusHalt
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _vehicleTransform: {fileID: 4210625634744890438}
+  _xrOrigin: {fileID: 0}
+  _playerCamera: {fileID: 0}
+  _seatPosition: {fileID: 3209785059995599676}
+  _exitPosition: {fileID: 688949833937697200}
+  _locomotionMediator: {fileID: 0}
+  _continuousMoveProvider: {fileID: 0}
+  _continuousTurnProvider: {fileID: 0}
+  _teleportationProvider: {fileID: 0}
+  _climbProvider: {fileID: 0}
+  _grabMoveProvider: {fileID: 0}
+  _twoHandedGrabMoveProvider: {fileID: 0}
+  _characterController: {fileID: 0}
   _locomotionObject: {fileID: 0}
-  enterExitAction:
+  _enterExitAction:
     m_UseReference: 0
     m_Action:
       m_Name: Enter Exit
-      m_Type: 1
-      m_ExpectedControlType: Button
-      m_Id: cf08da3b-e636-452a-aacd-72b48a54dcb8
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 6cea9f3b-468c-4310-9e1e-590695e2af18
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: a0f1da2c-3166-4362-9856-79f9fbc4cfb2
+        m_Id: a8157180-2380-469f-93a7-f8d245e3c741
         m_Path: <XRController>{RightHand}/triggerPressed
         m_Interactions: 
         m_Processors: 
@@ -623,7 +638,7 @@ MonoBehaviour:
         m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
-  interactionDistance: 7.27
+  _interactionDistance: 8
   _walkingLoopSound: {fileID: 0}
 --- !u!114 &427428289745905165
 MonoBehaviour:
