@@ -744,7 +744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArrowSpawner
   _arrowPrefab: {fileID: 1959729250425484, guid: 82e89e88ef8b35f4ba9bf683ff829ea3, type: 3}
   _notchPoint: {fileID: 1450402078150728570}
-  _spawnDelay: 0
+  _spawnDelay: 1
   _haveArrow: 0
 --- !u!114 &6426623301643917505
 MonoBehaviour:
