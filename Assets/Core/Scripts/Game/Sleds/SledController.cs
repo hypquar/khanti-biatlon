@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace Sleds
 {
@@ -18,12 +19,22 @@ namespace Sleds
         public SledStatus Status { get { return _status; } set { _status = value; } }
 
         public void DropHandles()
+{
+    foreach (var handle in _handles)
+    {
+        if (handle.TryGetComponent(out XRGrabInteractable grabInteractable))
         {
-            foreach (var handle in _handles)
+            if (grabInteractable.isSelected)
             {
-                handle.ChangeStatus(HandleStatus.BeyondActiveZone);
+                grabInteractable.interactionManager.SelectExit(
+                    grabInteractable.firstInteractorSelecting,
+                    grabInteractable
+                );
             }
         }
+        handle.ChangeStatus(HandleStatus.BeyondActiveZone);
+    }
+}
         private void FixedUpdate()
         {
             ManageHandleInput();
