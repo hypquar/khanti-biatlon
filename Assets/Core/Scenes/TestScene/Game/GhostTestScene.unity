@@ -415,7 +415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 614656c2fd82ad94987402757ad2a28f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  recordInterval: 0.1
+  _recordInterval: 0.5
+  _routeBuffer: {fileID: 11400000, guid: a9c2920c3c129cb40bc26c6fe260dee9, type: 2}
 --- !u!65 &1305067398
 BoxCollider:
   m_ObjectHideFlags: 0

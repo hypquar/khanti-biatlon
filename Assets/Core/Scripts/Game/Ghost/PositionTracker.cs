@@ -31,9 +31,13 @@ public class PositionTracker : MonoBehaviour
     {
         _routeBuffer.RoutePoints.Add(new RoutePoint
         {
-            Position = new Float3Data(transform.position.x, transform.position.y, transform.position.z),
-            EulerXYZRotation = new Float3Data(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z),
-            Time = _timeElapsed + _recordInterval
+            Position = new Vector3(transform.position.x, transform.position.y, transform.position.z),
+            EulerRotation = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z),
+            Time = _timeElapsed
         });
+
+        Debug.Log($"Recorded position: {transform.position}, rotation: {transform.rotation.eulerAngles}, time: {_timeElapsed}");
+
+        _timeElapsed += _recordInterval;
     }
 }
