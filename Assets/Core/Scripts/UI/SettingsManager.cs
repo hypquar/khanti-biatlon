@@ -1,16 +1,37 @@
+using System.IO;
+using UnityEditor.Overlays;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [Header("Audio")]
+    [SerializeField] private AudioMixer _masterAudioMixer;
+
+    [SerializeField] private Slider _effectsSlider;
+    [SerializeField] private Slider _musicSlider;
+
+    public void SetQualityLevel(int qualityLevel)
     {
-        
+        QualitySettings.SetQualityLevel(qualityLevel);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeEffectsVolume(float volume)
     {
-        
+        volume = _effectsSlider.value;
+        ChangeAudioVolume("EffectsVolume", volume);
     }
+
+    public void ChangeMusicVolume(float volume)
+    {
+        volume = _musicSlider.value;
+        ChangeAudioVolume("MusicVolume", volume);
+    }
+
+    private void ChangeAudioVolume(string audioGroup, float volume)
+    {
+        _masterAudioMixer.SetFloat(audioGroup, volume);
+    }
+
 }
